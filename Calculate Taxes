@@ -4,7 +4,7 @@ calculate and display the U.S. income tax owed given the following (taken as inp
 annual wages, taxable interest, unemployment compensation, status (dependent, single, or married), 
 and taxes withheld. 
 VSCode / JDK 11
-*/
+
 
 import java.util.Scanner;
 
