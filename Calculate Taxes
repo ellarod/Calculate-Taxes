@@ -1,0 +1,139 @@
+10/25/2023
+CSE 7 Fall 23: Lab 8: Methods
+calculate and display the U.S. income tax owed given the following (taken as input from the user): 
+annual wages, taxable interest, unemployment compensation, status (dependent, single, or married), 
+and taxes withheld. 
+VSCode / JDK 11
+*/
+
+import java.util.Scanner;
+
+public class CalculateTaxes{
+    public static void main(String[] args){
+        Scanner s = new Scanner(System.in);
+
+        System.out.println("Enter your wages");
+        double wages = getDouble(s);
+
+        System.out.println("Enter your interest earned");
+        double interest= getDouble(s);
+
+        System.out.println("Enter your unemployment compensation");
+        double unemployComp = getDouble(s);
+
+        System.out.println("Enter your taxes previously withheld");
+        double withheld = getDouble(s);
+
+        System.out.println("Enter your tax status");
+        int status = getInt(s);
+
+        //Method calls
+        double agi = computeAGI(wages, interest, unemployComp);
+        System.out.printf("AGI: $%,d\n", Math.round(agi));
+
+        int deduction = getDeduction(status);
+        System.out.printf("Deduction: $%,d\n", deduction);
+
+        double taxable = getTaxable(agi,deduction);
+        System.out.printf("Taxable Income: $%,d\n", Math.round(taxable));
+
+        int taxes = calcTax(taxable, status);
+        System.out.printf("Federal Taxes: $%,d\n", taxes);
+
+        int taxOwed = calcTaxOwed(taxes, withheld);
+        System.out.printf("Tax Due: $%,d\n", taxOwed);
+
+        s.close();
+
+    }
+
+    public static int calcTaxOwed(int tax, double withheld){
+        return (int) Math.round(tax - withheld);
+
+    }
+    public static int calcTax(double taxableInc, int status){
+        double tax = 0;
+        if(status ==0 || status == 1){
+            //info from first table
+            if(taxableInc <= 10000){
+                tax = .10 * taxableInc ;
+            }else if(taxableInc > 10000 && taxableInc <= 40000){
+                tax = 1000 + .12 * (taxableInc -10000);
+            }else if(taxableInc <= 85000){
+                tax = 4600 + .22 * (taxableInc -40000);
+            }else{
+                tax = 14500 + .24 * (taxableInc-85000);
+            }
+            
+        }else{
+            // infro from second tabble for married filers
+            if(taxableInc <= 20000){
+                tax = .10 * taxableInc;
+            }else if (taxableInc <= 80000){
+                tax= 2000 + .12 * (taxableInc -20000);
+            }else{
+                tax = 9200 + .22 * (taxableInc-80000);
+            }
+
+        }
+        return(int) Math.round(tax);
+        
+    }
+    public static double getTaxable(double agi, int deduct){
+        double taxable = agi- deduct;
+        if(taxable < 0){
+            taxable =0;
+        }
+        return taxable;
+
+    }
+    public static int getDeduction(int status){
+        int deduction = 6000;
+        switch(status){
+            case 1: deduction = 12000; break;
+            case 2: deduction = 24000; break;
+        }
+        return deduction;
+
+    }
+    public static double computeAGI(double wages, double interest, double unemployment){
+        return wages + interest + unemployment;
+    }
+    public static int getInt(Scanner keys){
+        int num = 0;
+        num = keys.nextInt();
+
+        if(num>=0){
+            //validate user input
+            if (num==0 || num==1 || num==2){
+                return num;
+            } else {
+                System.out.println("Invalid input. Only 0, 1, or 2");
+                return keys.nextInt();
+
+            }
+        }else{
+            System.out.println("Invalid Input: Positive values only ");
+            return keys.nextInt();
+        }
+
+
+    
+    }
+    
+
+    public static double getDouble(Scanner keys){
+        //validate user input
+        double num = 0;
+        num = keys.nextDouble();
+
+        if(num>=0){
+            return num;
+        }else{
+            System.out.println("Invalid Input: Positive values only ");
+            return keys.nextDouble();
+        }
+
+    }
+    
+}
